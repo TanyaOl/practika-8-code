@@ -1,0 +1,548 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Практична робота § 7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Onest:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: одна колонка, три практичні частини + речення + шпаргалка, внизу картка результатів.
+   Палітра: холодний папір, чорнильний синьо-фіолетовий, ультрамариновий акцент, бурштин для підказок. */
+:root{
+  --bg:#F2F4FA; --panel:#FFFFFF; --ink:#151936; --ink2:#4B5278; --line:#CDD3E8; --edge:#151936;
+  --accent:#2B3AE6; --accent-ink:#FFFFFF; --soft:#E4E8FB; --gridline:#D5DAEC;
+  --ok:#0A8A5A; --bad:#D2323F; --warn:#9A6200; --hintbg:#FFF3D6;
+  --body:'Onest',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1021; --panel:#161A33; --ink:#F1F3FF; --ink2:#B4BBE0; --line:#2C3360; --edge:#6670C4;
+    --accent:#8F99FF; --accent-ink:#0D1021; --soft:#222956; --gridline:#2B3260;
+    --ok:#3DDC97; --bad:#FF7C87; --warn:#F2B84B; --hintbg:#3A2F12; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1021; --panel:#161A33; --ink:#F1F3FF; --ink2:#B4BBE0; --line:#2C3360; --edge:#6670C4;
+  --accent:#8F99FF; --accent-ink:#0D1021; --soft:#222956; --gridline:#2B3260;
+  --ok:#3DDC97; --bad:#FF7C87; --warn:#F2B84B; --hintbg:#3A2F12; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--body);padding-inline:16px;padding-block:0 72px}
+.wrap{max-width:860px;margin-inline:auto}
+h1,h2,h3{font-family:var(--body);font-weight:800;line-height:1.15;text-wrap:balance;margin:0;color:var(--ink)}
+h1{font-size:clamp(2.2rem,8vw,3.5rem);letter-spacing:-.01em}
+h2{font-size:clamp(1.5rem,5vw,2rem)}
+h3{font-size:1.3rem;margin-bottom:10px}
+p{margin:0 0 12px;max-width:68ch}
+code,pre,.mono{font-family:var(--mono)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.eyebrow{font:700 13px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin:0 0 10px}
+.hero{padding-block:36px 24px}
+.hero .lead{font-size:1.1rem;margin-top:14px}
+.bandh{background:var(--accent);color:var(--accent-ink);padding:10px 16px;width:fit-content;max-width:100%;margin-bottom:18px}
+.lab{background:var(--panel);border:2px solid var(--edge);box-shadow:6px 6px 0 var(--accent);padding:18px;margin:22px 6px 26px 0}
+.lab>h3{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.card{background:var(--panel);border:1.5px solid var(--line);padding:16px;min-width:0;margin:22px 0}
+.tag{font:700 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent);padding:4px 8px}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.row>*{min-width:0}
+.muted{color:var(--ink2)}
+.small{font-size:.9rem}
+.ok{color:var(--ok);font-weight:700}
+.bad{color:var(--bad);font-weight:700}
+.warnc{color:var(--warn);font-weight:700}
+.hint{background:var(--hintbg);border-left:5px solid var(--warn);padding:8px 12px;margin:10px 0 0;max-width:68ch;font-size:.95rem}
+.hint p{margin:0 0 4px}
+.hint p:last-child{margin:0}
+.tipbox{display:flex;gap:12px;align-items:flex-start;background:var(--hintbg);border:2px solid var(--warn);padding:12px 14px;margin-top:14px;max-width:68ch}
+.tipbox b{white-space:nowrap}
+.btn{font:500 15px/1 var(--body);background:var(--panel);color:var(--ink);border:2px solid var(--edge);padding:10px 14px;cursor:pointer;border-radius:2px}
+.btn:hover{background:var(--soft)}
+.btn:active{transform:translate(1px,1px)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.sm{padding:7px 10px;font-size:14px}
+.btn.hb{border-color:var(--warn)}
+.btn.hb:disabled{opacity:.55;cursor:default}
+input[type=number],input[type=text],select,textarea{font:inherit;background:var(--panel);color:var(--ink);border:2px solid var(--edge);padding:7px 9px;border-radius:2px;max-width:100%}
+input[type=text]{width:100%}
+input[type=number]{width:110px;font-family:var(--mono)}
+textarea{width:100%;min-height:90px}
+label{font-weight:500}
+table{border-collapse:collapse;width:100%}
+th,td{border:1.5px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{background:var(--soft);font-weight:700;font-size:.9rem}
+.tablewrap{overflow-x:auto;max-width:100%}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.who{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 18px}
+.who label{display:flex;flex-direction:column;gap:4px}
+.cloze{line-height:2.4;max-width:70ch}
+.cloze select{margin-inline:4px}
+.cloze select.right{border-color:var(--ok)}
+.cloze select.wrong{border-color:var(--bad)}
+.pgrid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:1px;background:var(--gridline);border:2px solid var(--edge);width:min(100%,340px);aspect-ratio:1;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair;flex:0 0 auto}
+.pgrid .cell{min-height:0;min-width:0;background:#fff}
+.pal{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.sw{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:2px solid transparent;padding:3px;cursor:pointer;color:var(--ink);font:400 11px var(--mono)}
+.sw i{display:block;width:30px;height:30px;border:2px solid var(--edge)}
+.sw[aria-pressed="true"]{border-color:var(--accent);background:var(--soft)}
+.lab-cols{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.lab-cols>.side{flex:1 1 260px;min-width:0}
+.stat{font-family:var(--mono);margin:10px 0 0}
+.stat b{color:var(--accent)}
+ol.steps{padding-left:22px;max-width:70ch}
+ol.steps li{margin-bottom:6px}
+.checks{list-style:none;padding:0;margin:8px 0;display:grid;gap:8px}
+.checks label{display:flex;gap:10px;align-items:flex-start;font-weight:400}
+.checks input{margin-top:5px;width:18px;height:18px;accent-color:var(--accent);flex:0 0 auto}
+.tswatch{display:inline-block;width:22px;height:22px;border:2px solid var(--edge);vertical-align:middle}
+.swrow{display:inline-flex;align-items:center;gap:6px}
+.ref{background:var(--panel);border:2px solid var(--edge);padding:6px 16px;margin:18px 0}
+.ref summary{cursor:pointer;font-weight:800;font-size:1.1rem;padding:8px 0}
+.ref table{max-width:520px;margin:6px 0 12px}
+.rcard{border:3px solid var(--edge);background:var(--panel);padding:16px;max-width:640px}
+.rhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:6px 16px;border-bottom:3px solid var(--edge);padding-bottom:10px;margin-bottom:10px}
+.rtitle{font:700 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+.rname{font:800 1.6rem/1.2 var(--body);overflow-wrap:anywhere}
+.rclass{color:var(--ink2);font-weight:500}
+.rtime{font-size:.85rem;color:var(--ink2)}
+.rtab th,.rtab td{padding:6px 8px;font-size:.95rem;vertical-align:top}
+.rtab td:first-child{font-weight:500;width:46%}
+.rtab td:last-child{font-family:var(--mono);font-size:.88rem;overflow-wrap:anywhere}
+.rtab .un{color:var(--ink2)}
+.rtab tr.grp td{background:var(--soft);font:700 12px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+footer{margin-top:44px;color:var(--ink2);font-size:.9rem}
+@media (prefers-reduced-motion: no-preference){.btn{transition:background .12s,transform .08s}}
+@media (max-width:520px){.lab{padding:14px;margin-right:4px}}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">Інформатика · 8 клас · § 7</p>
+  <h1>Практична робота</h1>
+  <p class="lead">Чотири невеликі частини: колір за числами, власний малюнок із таблицею кодування, обсяги файлів у Paint і речення про растр та вектор. Кожну можна зробити самостійно. Застряг(-ла) — натисни «Підказка».</p>
+</header>
+
+<div class="lab" id="who">
+  <h3><span class="tag">Старт</span> Хто виконує роботу</h3>
+  <div class="who">
+    <label for="stName">Прізвище та ім'я<input type="text" id="stName" autocomplete="name" placeholder="Петренко Олена"></label>
+    <label for="stClass">Клас<input type="text" id="stClass" placeholder="8-А"></label>
+  </div>
+  <p class="small muted" style="margin:10px 0 0">Дані потраплять у картку результатів унизу. Вони зберігаються лише в цьому браузері.</p>
+  <div class="tipbox">
+    <b>Підказки</b>
+    <span>Жовта кнопка «Підказка» має два рівні. Спершу спробуй сам(-а). Кількість підказок буде видно в картці результатів.</span>
+  </div>
+</div>
+
+<details class="ref" open>
+  <summary>Шпаргалка (відкрита, щоб було під рукою)</summary>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>n бітів</th><th>1</th><th>2</th><th>3</th><th>4</th><th>8</th></tr></thead>
+      <tbody><tr><td>кольорів, 2<sup>n</sup></td><td class="num">2</td><td class="num">4</td><td class="num">8</td><td class="num">16</td><td class="num">256</td></tr></tbody>
+    </table>
+  </div>
+  <ul style="padding-left:20px;margin:6px 0 10px">
+    <li>У RGB: 0 — кольору немає, 255 — максимум.</li>
+    <li>Обсяг малюнка = кількість пікселів × біт на піксель.</li>
+    <li>1 байт = 8 бітів.</li>
+    <li>Що більше кольорів, то більше бітів на піксель.</li>
+  </ul>
+</details>
+
+<!-- ЧАСТИНА А -->
+<div class="lab">
+  <h3><span class="tag">Частина А</span> Який це колір?</h3>
+  <p>Для кожного набору (R, G, B) вибери колір зі списку. Потім за бажанням перевір у Paint: «Змінити колір» → введи числа.</p>
+  <div class="tablewrap">
+    <table id="colTab">
+      <thead><tr><th>Червоний</th><th>Зелений</th><th>Синій</th><th>Колір</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <button class="btn primary sm" id="colCheck" type="button">Перевірити таблицю</button>
+    <button class="btn sm hb" id="colHint" type="button">Підказка</button>
+    <span id="colMsg" role="status"></span>
+  </div>
+  <div class="hint" id="colHintOut" hidden></div>
+</div>
+
+<!-- ЧАСТИНА Б -->
+<div class="lab">
+  <h3><span class="tag">Частина Б</span> Моя картинка 8 × 8</h3>
+  <ol class="steps">
+    <li>Зафарбуй картинку по-своєму: обери колір у палітрі й малюй.</li>
+    <li>Подивись у таблицю праворуч: скільки кольорів і які в них коди.</li>
+    <li>Перепиши таблицю кодування в зошит.</li>
+  </ol>
+  <div class="pal" id="mpPal" role="group" aria-label="Палітра"></div>
+  <div class="lab-cols">
+    <div class="pgrid" id="mpGrid" aria-label="Полотно 8 на 8"></div>
+    <div class="side">
+      <div class="tablewrap"><table id="mpTab"><thead><tr><th>Колір</th><th>Код</th></tr></thead><tbody></tbody></table></div>
+      <p class="stat" id="mpStat"></p>
+      <div class="row" style="margin-top:10px">
+        <button class="btn sm" id="mpClear" type="button">Чисте полотно</button>
+        <button class="btn sm" id="mpCopy" type="button">Копіювати код</button>
+        <button class="btn sm hb" id="mpHint" type="button">Підказка</button>
+        <span id="mpMsg" class="small" role="status"></span>
+      </div>
+      <div class="hint" id="mpHintOut" hidden></div>
+    </div>
+  </div>
+  <label for="mpOut" class="small muted" style="display:block;margin-top:12px">Код малюнка (по рядках)</label>
+  <textarea id="mpOut" readonly rows="6" style="font-family:var(--mono);font-size:12px"></textarea>
+</div>
+
+<!-- ЧАСТИНА В -->
+<div class="lab">
+  <h3><span class="tag">Частина В</span> Три формати BMP у Paint</h3>
+  <ol class="steps">
+    <li>Відкрий Paint і намалюй кілька кольорових кіл на білому тлі.</li>
+    <li>Збережи файл тричі через «Зберегти як…»: 24-розрядний BMP, 16-колірний BMP, монохромний BMP.</li>
+    <li>Подивись обсяг кожного файлу й впиши його нижче.</li>
+  </ol>
+  <div class="row">
+    <label>Ширина, пікс <input type="number" id="pW" value="800" min="1"></label>
+    <label>Висота, пікс <input type="number" id="pH" value="600" min="1"></label>
+  </div>
+  <div class="tablewrap" style="margin-top:12px">
+    <table>
+      <thead><tr><th>Формат</th><th>Біт на піксель</th><th>Очікую, КБ</th><th>Мій файл, КБ</th></tr></thead>
+      <tbody>
+        <tr><td>24-розрядний BMP</td><td class="num">24</td><td class="num" id="pE24"></td><td><input type="number" id="pM24" min="0" step="any" aria-label="Обсяг 24-розрядного, КБ"></td></tr>
+        <tr><td>16-колірний BMP</td><td class="num">4</td><td class="num" id="pE16"></td><td><input type="number" id="pM16" min="0" step="any" aria-label="Обсяг 16-колірного, КБ"></td></tr>
+        <tr><td>Монохромний BMP</td><td class="num">1</td><td class="num" id="pE1"></td><td><input type="number" id="pM1" min="0" step="any" aria-label="Обсяг монохромного, КБ"></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">Очікуваний обсяг = ширина × висота × біт ÷ 8 ÷ 1024. Справжній файл трохи більший через службовий заголовок.</p>
+  <label class="small" style="display:flex;gap:8px;align-items:flex-start;margin:6px 0 10px;font-weight:400"><input type="checkbox" id="noPaint" style="margin-top:4px"> Я не мав(-ла) змоги скористатися Paint, тому вписав(-ла) очікувані значення</label>
+  <div class="row">
+    <button class="btn primary sm" id="pCheck" type="button">Перевірити обсяги</button>
+    <button class="btn sm hb" id="pHint" type="button">Підказка</button>
+    <span id="pMsg" role="status"></span>
+  </div>
+  <div class="hint" id="pHintOut" hidden></div>
+  <p class="cloze" id="clozeBmp" style="margin-top:14px">
+    <b>Висновок.</b> Що більше кольорів у зображенні, то
+    <select data-ans="0" aria-label="Пропуск 1"><option value="">…</option><option value="0">більший</option><option value="1">менший</option></select>
+    обсяг файлу, оскільки на кодування кожного пікселя потрібно
+    <select data-ans="0" aria-label="Пропуск 2"><option value="">…</option><option value="0">більше</option><option value="1">менше</option></select>
+    бітів.
+  </p>
+  <p id="clozeBmpMsg" role="status" class="small"></p>
+</div>
+
+<!-- ЧАСТИНА Г -->
+<div class="card">
+  <h3><span class="tag" style="margin-right:8px">Частина Г</span> Растр і вектор</h3>
+  <p class="small muted">Вибери слова зі списків.</p>
+  <p class="cloze" id="clozeRV">
+    Растрова графіка добре підходить для
+    <select data-ans="0" aria-label="Пропуск 1"><option value="">…</option><option value="0">фотографій</option><option value="1">логотипів</option><option value="2">креслень</option></select>,
+    а векторна — для
+    <select data-ans="1" aria-label="Пропуск 2"><option value="">…</option><option value="0">фотографій</option><option value="1">логотипів і схем</option><option value="2">плавних тіней</option></select>.
+    Якщо збільшити растр, він
+    <select data-ans="0" aria-label="Пропуск 3"><option value="">…</option><option value="0">розпадається на квадрати</option><option value="1">стає чіткішим</option><option value="2">змінює колір</option></select>,
+    а вектор можна збільшувати
+    <select data-ans="2" aria-label="Пропуск 4"><option value="">…</option><option value="0">лише вдвічі</option><option value="1">не можна</option><option value="2">без втрати якості</option></select>.
+  </p>
+  <p id="clozeRVMsg" role="status" class="small"></p>
+  <div class="row"><button class="btn sm hb" id="rvHint" type="button">Підказка</button></div>
+  <div class="hint" id="rvHintOut" hidden></div>
+</div>
+
+<h3 style="margin-top:28px">Що я зробив(-ла)</h3>
+<ul class="checks" id="checks">
+  <li><label><input type="checkbox" data-k="a"> Вибрав(-ла) кольори для таблиці RGB</label></li>
+  <li><label><input type="checkbox" data-k="b"> Створив(-ла) малюнок і записав(-ла) таблицю кодування в зошит</label></li>
+  <li><label><input type="checkbox" data-k="c"> Порівняв(-ла) обсяги файлів BMP</label></li>
+  <li><label><input type="checkbox" data-k="d"> Закінчив(-ла) речення про растр і вектор</label></li>
+</ul>
+
+<!-- КАРТКА -->
+<h2 class="bandh" style="margin-top:44px">Моя картка результатів</h2>
+<p>Перевір, що вгорі вписано ім'я та клас. Картка оновлюється сама. Коли закінчиш, зроби скріншот усієї картки й надішли вчителю. Якщо скріншот не виходить, натисни «Копіювати текстом».</p>
+<div class="rcard" id="rcard">
+  <div class="rhead">
+    <div>
+      <div class="rtitle">Інформатика · § 7 · Практична робота</div>
+      <div class="rname" id="rName"></div>
+      <div class="rclass" id="rClass"></div>
+    </div>
+    <div class="rtime mono" id="rTime"></div>
+  </div>
+  <table class="rtab" aria-label="Результати практичної роботи"><tbody id="rBody"></tbody></table>
+</div>
+<div class="row" style="margin-top:14px">
+  <button class="btn primary" id="rCopy" type="button">Копіювати текстом</button>
+  <span id="rMsg" class="small" role="status"></span>
+</div>
+
+<footer>Матеріал спирається на § 7 «Кодування графіки та звуку», підручник з інформатики для 8 класу.</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var bin=function(n,w){return n.toString(2).padStart(w,'0')};
+var fmt=function(n,d){return n.toLocaleString('uk-UA',{maximumFractionDigits:d===undefined?2:d})};
+var store={
+  get:function(k,d){try{var v=localStorage.getItem('pr:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+  set:function(k,v){try{localStorage.setItem('pr:'+k,JSON.stringify(v))}catch(e){}}
+};
+function say(el,text,cls){el.textContent=text;el.className=cls||''}
+var RES={};
+
+function hintWidget(btn,out,texts){
+  var lvl=0;
+  btn.addEventListener('click',function(){
+    if(lvl>=texts.length)return;
+    lvl++;RES.hints=(RES.hints||0)+1;
+    out.hidden=false;
+    out.innerHTML=texts.slice(0,lvl).map(function(x,i){return '<p><b>Підказка '+(i+1)+'.</b> '+x+'</p>'}).join('');
+    if(lvl>=texts.length){btn.disabled=true;btn.textContent='Підказки закінчились'}
+    else btn.textContent='Ще підказка';
+  });
+}
+
+function cloze(rootSel,msgSel,key,okText){
+  var sel=$$(rootSel+' select');
+  function chk(){
+    var ok=0,all=true;
+    sel.forEach(function(s){
+      s.classList.remove('right','wrong');
+      if(s.value==='')all=false;
+      else if(s.value===s.getAttribute('data-ans')){s.classList.add('right');ok++}
+      else s.classList.add('wrong');
+    });
+    RES[key]=ok+' з '+sel.length;
+    var m=$(msgSel);
+    if(ok===sel.length)say(m,okText,'ok');
+    else if(all)say(m,'Є помилки. Зміни відповіді, обведені червоним.','bad');
+    else say(m,'');
+  }
+  sel.forEach(function(s){s.addEventListener('change',chk)});
+}
+cloze('#clozeBmp','#clozeBmpMsg','cbmp','Так! Більше кольорів — більше бітів на піксель — більший файл.');
+cloze('#clozeRV','#clozeRVMsg','rv','Усе правильно!');
+hintWidget($('#rvHint'),$('#rvHintOut'),[
+  'Растр складається з пікселів, тому при сильному збільшенні видно квадрати. Вектор зберігає опис фігур, а не пікселі.',
+  'Фотографії мають плавні переходи кольору (растр). Логотипи й схеми складаються з простих фігур (вектор).'
+]);
+
+function makeGrid(root,n,colorOf,paint){
+  root.style.setProperty('--n',n);
+  root.innerHTML='';
+  var cells=[];
+  for(var i=0;i<n*n;i++){var d=document.createElement('div');d.className='cell';d.setAttribute('data-i',i);root.appendChild(d);cells.push(d)}
+  var down=false;
+  function hit(e,first){
+    var t=document.elementFromPoint(e.clientX,e.clientY);
+    if(t&&t.parentNode===root&&t.getAttribute('data-i')!==null)paint(+t.getAttribute('data-i'),first);
+  }
+  root.addEventListener('pointerdown',function(e){down=true;hit(e,true);e.preventDefault()});
+  root.addEventListener('pointermove',function(e){if(down)hit(e,false)});
+  window.addEventListener('pointerup',function(){down=false});
+  window.addEventListener('pointercancel',function(){down=false});
+  return {refresh:function(){cells.forEach(function(c,i){c.style.background=colorOf(i)})}};
+}
+
+var PAL=[
+  ['#FFFFFF','білий'],['#000000','чорний'],['#E53935','червоний'],['#1E5BE0','синій'],
+  ['#2E9E4F','зелений'],['#FFD21F','жовтий'],['#FF8A1F','помаранчевий'],['#8E3FD1','фіолетовий'],
+  ['#FF8FB1','рожевий'],['#7A4A21','коричневий'],['#20C3D6','блакитний'],['#9AA0A6','сірий'],
+  ['#0B5D2A','темно-зелений'],['#0D1B6B','темно-синій'],['#C7E86A','салатовий'],['#E6B8A2','тілесний']
+];
+
+/* частина А */
+(function(){
+  var R=[[0,0,0,'чорний'],[0,255,0,'зелений'],[255,0,0,'червоний'],[0,0,255,'синій'],[255,255,255,'білий'],[128,128,128,'сірий']];
+  var names=['','чорний','білий','червоний','зелений','синій','сірий'];
+  var tb=$('#colTab tbody');
+  R.forEach(function(r,i){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td class="num">'+r[0]+'</td><td class="num">'+r[1]+'</td><td class="num">'+r[2]+'</td>'+
+      '<td><select id="colIn'+i+'" aria-label="Колір для ('+r[0]+', '+r[1]+', '+r[2]+')">'+
+      names.map(function(o){return '<option value="'+o+'">'+(o||'обери…')+'</option>'}).join('')+
+      '</select></td><td id="colRes'+i+'"></td>';
+    tb.appendChild(tr);
+  });
+  hintWidget($('#colHint'),$('#colHintOut'),[
+    '0 означає, що цього кольору немає. 255 — цього кольору максимум. Дивись, які з трьох чисел ненульові.',
+    'Якщо лише одне число 255, а інші 0 — це колір цього каналу (R — червоний, G — зелений, B — синій). Якщо три числа однакові — це чорний (0), білий (255) або сірий (128).'
+  ]);
+  $('#colCheck').addEventListener('click',function(){
+    var ok=0;
+    R.forEach(function(r,i){
+      var v=$('#colIn'+i).value,td=$('#colRes'+i);
+      if(!v){td.innerHTML='';return}
+      var good=v===r[3];
+      if(good)ok++;
+      td.innerHTML=(good?'<span class="ok">✓</span> ':'<span class="bad">✗</span> ')+'<span class="tswatch" style="background:rgb('+r[0]+','+r[1]+','+r[2]+')"></span>';
+    });
+    RES.col=ok+' з '+R.length+' правильно';
+    if(ok===R.length)say($('#colMsg'),'Усе правильно!','ok');
+    else say($('#colMsg'),'Правильно: '+ok+' з '+R.length+'. Рядки з ✗ переглянь ще раз.','warnc');
+  });
+})();
+
+/* частина Б */
+(function(){
+  var N=8,data=new Uint8Array(N*N),sel=1,touched=false;
+  function demo(){
+    data.fill(10);
+    for(var r=6;r<8;r++)for(var c=0;c<N;c++)data[r*N+c]=4;
+    for(var r2=4;r2<6;r2++){data[r2*N+3]=9;data[r2*N+4]=9}
+    for(var r3=1;r3<4;r3++)for(var c3=2;c3<6;c3++)data[r3*N+c3]=12;
+    data[0*N+6]=5;data[0*N+7]=5;
+  }
+  demo();
+  var grid=makeGrid($('#mpGrid'),N,function(i){return PAL[data[i]][0]},function(i){data[i]=sel;touched=true;upd()});
+  hintWidget($('#mpHint'),$('#mpHintOut'),[
+    'Глибина n бітів дає 2ⁿ кольорів. Знайди найменше n, щоб 2ⁿ було не менше, ніж кількість кольорів у твоєму малюнку.',
+    '1–2 кольори → 1 біт; 3–4 кольори → 2 біти; 5–8 кольорів → 3 біти; 9–16 кольорів → 4 біти.'
+  ]);
+  function pal(){
+    var box=$('#mpPal');box.innerHTML='';
+    PAL.forEach(function(p,i){
+      var b=document.createElement('button');b.type='button';b.className='sw';
+      b.setAttribute('aria-pressed',i===sel?'true':'false');b.setAttribute('aria-label',p[1]);b.title=p[1];
+      b.innerHTML='<i style="background:'+p[0]+'"></i>';
+      b.addEventListener('click',function(){sel=i;pal()});box.appendChild(b);
+    });
+  }
+  function upd(){
+    grid.refresh();
+    var used=[];for(var i=0;i<data.length;i++)if(used.indexOf(data[i])<0)used.push(data[i]);
+    used.sort(function(a,b){return a-b});
+    var k=used.length,n=Math.max(1,Math.ceil(Math.log2(k)));
+    var code={};used.forEach(function(u,j){code[u]=bin(j,n)});
+    var tb=$('#mpTab tbody');tb.innerHTML='';
+    used.forEach(function(u){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td><span class="swrow"><span class="tswatch" style="background:'+PAL[u][0]+'"></span>'+PAL[u][1]+'</span></td><td class="num">'+code[u]+'</td>';
+      tb.appendChild(tr);
+    });
+    var bits=N*N*n;
+    if(touched)RES.mp='кольорів: '+k+', глибина: '+n+' біт, обсяг: '+bits+' біт ('+fmt(bits/8)+' байт)';
+    $('#mpStat').innerHTML='Кольорів у малюнку: <b>'+k+'</b><br>Мінімальна глибина: <b>'+n+'</b> '+(n===1?'біт':(n<5?'біти':'бітів'))+' (2<sup>'+n+'</sup> = '+Math.pow(2,n)+' ≥ '+k+')<br>Обсяг: '+(N*N)+' × '+n+' = <b>'+bits+'</b> біт = <b>'+fmt(bits/8)+'</b> байт';
+    var out=['Таблиця кодування:'];
+    used.forEach(function(u){out.push(PAL[u][1]+' = '+code[u])});
+    out.push('','Код малюнка:');
+    for(var r=0;r<N;r++){var row=[];for(var c=0;c<N;c++)row.push(code[data[r*N+c]]);out.push(row.join(' '))}
+    $('#mpOut').value=out.join('\n');
+  }
+  $('#mpClear').addEventListener('click',function(){data.fill(0);touched=true;upd()});
+  $('#mpCopy').addEventListener('click',function(){
+    var ta=$('#mpOut'),m=$('#mpMsg');
+    function fallback(){ta.focus();ta.select();say(m,'Виділено. Натисни Ctrl+C.','warnc')}
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ta.value).then(function(){say(m,'Скопійовано','ok')},fallback);
+      else fallback();
+    }catch(e){fallback()}
+  });
+  pal();upd();
+})();
+
+/* частина В */
+(function(){
+  var wI=$('#pW'),hI=$('#pH');
+  function est(){
+    var w=Math.max(1,+wI.value||0),h=Math.max(1,+hI.value||0);
+    $('#pE24').textContent=fmt(w*h*24/8/1024,1);
+    $('#pE16').textContent=fmt(w*h*4/8/1024,1);
+    $('#pE1').textContent=fmt(w*h*1/8/1024,1);
+  }
+  wI.addEventListener('input',est);hI.addEventListener('input',est);est();
+  hintWidget($('#pHint'),$('#pHintOut'),[
+    'У Paint: Файл → Зберегти як. У нижньому списку «Тип файлу» обери потрібний формат BMP.',
+    'Розмір файлу: клацни на ньому правою кнопкою → «Властивості» (або «Відомості»). Дивись число в КБ. Очікувані значення в таблиці — орієнтир для порівняння.'
+  ]);
+  $('#pCheck').addEventListener('click',function(){
+    var a=+$('#pM24').value,b=+$('#pM16').value,c=+$('#pM1').value,m=$('#pMsg');
+    if(!(a>0&&b>0&&c>0)){say(m,'Впиши всі три обсяги.','warnc');return}
+    var ordered=a>b&&b>c;
+    RES.bmp=fmt(a,1)+' / '+fmt(b,1)+' / '+fmt(c,1)+' КБ'+(ordered?' ✓ порядок вірний':' ✗ порядок хибний')+($('#noPaint').checked?' · без Paint':'');
+    if(ordered)say(m,'Так: 24-розрядний більший за 16-колірний, а той — за монохромний.','ok');
+    else say(m,'Має бути так: 24-розрядний > 16-колірний > монохромний. Перевір числа.','bad');
+  });
+})();
+
+/* чекліст */
+(function(){
+  var saved=store.get('checks',{}),boxes=$$('#checks input');
+  boxes.forEach(function(b){
+    b.checked=!!saved[b.getAttribute('data-k')];
+    b.addEventListener('change',function(){saved[b.getAttribute('data-k')]=b.checked;store.set('checks',saved)});
+  });
+})();
+
+/* картка */
+(function(){
+  var nameI=$('#stName'),clsI=$('#stClass');
+  nameI.value=store.get('name','');clsI.value=store.get('cls','');
+  function rows(){
+    var checked=$$('#checks input').filter(function(b){return b.checked}).length;
+    var u='—';
+    return [
+      ['g','Практична робота'],
+      ['А. Таблиця кольорів',RES.col||u],
+      ['Б. Моя картинка 8 × 8',RES.mp||'не змінено'],
+      ['В. Обсяги BMP (24-бітний / 16-колірний / монохромний)',RES.bmp||u],
+      ['В. Висновок (пропуски)',RES.cbmp||u],
+      ['Г. Растр і вектор (пропуски)',RES.rv||u],
+      ['Чекліст виконано',checked+' з '+$$('#checks input').length],
+      ['g','Самостійність'],
+      ['Використано підказок',String(RES.hints||0)]
+    ];
+  }
+  function render(){
+    var nm=nameI.value.trim(),cl=clsI.value.trim();
+    store.set('name',nameI.value);store.set('cls',clsI.value);
+    $('#rName').textContent=nm||'Ім’я не вказано';
+    $('#rClass').textContent=cl?(cl+' клас'):'клас не вказано';
+    $('#rTime').textContent=new Date().toLocaleString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    var body=$('#rBody');body.innerHTML='';
+    rows().forEach(function(r){
+      var tr=document.createElement('tr');
+      if(r[0]==='g'){tr.className='grp';var td=document.createElement('td');td.colSpan=2;td.textContent=r[1];tr.appendChild(td)}
+      else{
+        var a=document.createElement('td'),b=document.createElement('td');
+        a.textContent=r[0];b.textContent=r[1];
+        if(r[1]==='—'||r[1]==='не змінено')b.className='un';
+        tr.appendChild(a);tr.appendChild(b);
+      }
+      body.appendChild(tr);
+    });
+  }
+  ['input','change','click','pointerup','keyup'].forEach(function(ev){document.addEventListener(ev,render)});
+  $('#rCopy').addEventListener('click',function(){
+    render();
+    var lines=['Інформатика, § 7. Практична робота','Учень: '+($('#rName').textContent)+', '+($('#rClass').textContent),$('#rTime').textContent,''];
+    rows().forEach(function(r){lines.push(r[0]==='g'?'\n'+r[1].toUpperCase():r[0]+': '+r[1])});
+    var text=lines.join('\n'),m=$('#rMsg');
+    function fallback(){
+      var ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;opacity:0';
+      document.body.appendChild(ta);ta.select();
+      var ok=false;try{ok=document.execCommand('copy')}catch(e){}
+      document.body.removeChild(ta);
+      say(m,ok?'Скопійовано':'Не вдалося скопіювати. Зроби скріншот картки.',ok?'ok':'warnc');
+    }
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(function(){say(m,'Скопійовано. Встав у повідомлення вчителю.','ok')},fallback);
+      else fallback();
+    }catch(e){fallback()}
+  });
+  render();
+})();
+
+})();
+</script>
+
+</body></html>
